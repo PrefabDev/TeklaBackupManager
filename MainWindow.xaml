@@ -1,0 +1,358 @@
+<Window x:Class="TeklaBackupManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Tekla Backup Manager"
+        MinHeight="680"
+        MinWidth="1180"
+        Height="760"
+        Width="1280"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F7FB">
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#202838" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="Padding" Value="10,7" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="BorderBrush" Value="#C8D1E1" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="MinHeight" Value="36" />
+            <Setter Property="Padding" Value="14,7" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#1F6FEB" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#1F6FEB" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,12,0,6" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,24" LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left">
+                <TextBlock Text="Tekla Backup Manager" FontSize="30" FontWeight="Bold" />
+                <TextBlock Text="Centralized backup console for Tekla Structures model folders"
+                           Foreground="#516070"
+                           Margin="0,6,0,0" />
+            </StackPanel>
+            <Border DockPanel.Dock="Right"
+                    Background="#EAF1FF"
+                    BorderBrush="#BCD2FF"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="14,8"
+                    VerticalAlignment="Center">
+                <TextBlock x:Name="StatusText" Text="Pret" FontWeight="SemiBold" Foreground="#174EA6" />
+            </Border>
+            <StackPanel DockPanel.Dock="Right" Margin="0,0,14,0" VerticalAlignment="Center">
+                <TextBlock x:Name="LanguageLabel" Text="Langue" FontWeight="SemiBold" Margin="0,0,0,4" />
+                <ComboBox x:Name="LanguageBox" MinWidth="120" MinHeight="34" SelectionChanged="LanguageBox_SelectionChanged">
+                    <ComboBoxItem Content="Français" Tag="fr" IsSelected="True" />
+                    <ComboBoxItem Content="English" Tag="en" />
+                </ComboBox>
+            </StackPanel>
+
+
+        </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.2*" />
+                <ColumnDefinition Width="24" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="White" BorderBrush="#DCE3EF" BorderThickness="1" CornerRadius="8" Padding="22">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Sauvegarde" Style="{StaticResource SectionTitle}" />
+
+                        <TextBlock Text="Users to back up" Style="{StaticResource FieldLabel}" />
+                        <DataGrid x:Name="EmployeesGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  SelectionMode="Single"
+                                  MinHeight="170"
+                                  SelectionChanged="EmployeesGrid_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header="Actif" Binding="{Binding IsEnabled}" Width="54" />
+                                <DataGridTextColumn Header="User" Binding="{Binding EmployeeName}" Width="110" />
+                                <DataGridTextColumn Header="Machine" Binding="{Binding MachineName}" Width="130" />
+                                <DataGridTextColumn Header="Source" Binding="{Binding SourcePath}" Width="*" />
+                                <DataGridTextColumn Header="DB1 time" Binding="{Binding DailyDb1Time}" Width="86" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Full time" Binding="{Binding WeeklyFullTime}" Width="86" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Last status" Binding="{Binding LastStatus}" Width="140" IsReadOnly="True" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="User" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox x:Name="EmployeeNameBox" ToolTip="Example: USER01" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Machine" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox x:Name="MachineNameBox" ToolTip="Example: WORKSTATION-01" />
+                            </StackPanel>
+                            <Grid Grid.Column="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Source path" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox x:Name="SourcePathBox"
+                                         Grid.Row="1"
+                                         Grid.Column="0"
+                                         ToolTip="Example: \\WORKSTATION-01\TeklaStructuresModels" />
+                                <Button Grid.Row="1"
+                                        Grid.Column="2"
+                                        Content="Parcourir"
+                                        Click="BrowseSource_Click" />
+                            </Grid>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Path from machine" Click="BuildSourceFromMachine_Click" />
+                            <Button Grid.Column="2" Content="Add" Click="AddEmployee_Click" />
+                            <Button Grid.Column="4" Content="Update" Click="UpdateEmployee_Click" />
+                            <Button Grid.Column="6" Content="Remove" Click="RemoveEmployee_Click" />
+                        </Grid>
+
+                        <TextBlock Text="Backup server root" Style="{StaticResource FieldLabel}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="DestinationPathBox" Grid.Column="0" ToolTip="Example: \\BACKUP-SERVER\TeklaBackups" />
+                            <Button Grid.Column="2" Content="Parcourir" Click="BrowseDestination_Click" />
+                        </Grid>
+
+                        <TextBlock Text="Schedule" Style="{StaticResource FieldLabel}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="1.1*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="1.1*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="DB1 workdays" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox x:Name="DailyDb1TimeBox" Text="12:15" TextChanged="Schedule_Changed" ToolTip="Format HH:mm" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Full backup" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox Text="Friday only" IsReadOnly="True" Background="#F4F6FA" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Friday time" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox x:Name="WeeklyFullTimeBox" Text="12:30" TextChanged="Schedule_Changed" ToolTip="Format HH:mm" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="6">
+                                <TextBlock Text="Stagger" FontWeight="SemiBold" Margin="0,0,0,6" />
+                                <TextBox x:Name="StaggerMinutesBox" Text="3" TextChanged="Schedule_Changed" ToolTip="Minutes between users" />
+                            </StackPanel>
+                        </Grid>
+                        <Button Content="Apply schedule to selected user"
+                                HorizontalAlignment="Left"
+                                Margin="0,10,0,0"
+                                Click="ApplyScheduleToSelected_Click" />
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0"
+                                       Text="DB1: creates a dated folder automatically. Full: mirrors the weekly backup folder."
+                                       Foreground="#516070"
+                                       TextWrapping="Wrap"
+                                       VerticalAlignment="Center" />
+                            <CheckBox x:Name="ExcludeTempFilesBox"
+                                      Grid.Column="2"
+                                      Content="Ignore temporary/cache files"
+                                      IsChecked="True"
+                                      VerticalAlignment="Center" />
+                        </Grid>
+
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <CheckBox x:Name="EnableRetentionBox"
+                                      Grid.Column="0"
+                                      Content="Purge old backups"
+                                      IsChecked="True"
+                                      VerticalAlignment="Center" />
+                            <TextBox x:Name="RetentionDaysBox"
+                                     Grid.Column="2"
+                                     Text="30"
+                                     ToolTip="Nombre de jours a conserver" />
+                            <TextBlock Grid.Column="3"
+                                       Text="days"
+                                       Foreground="#516070"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0" />
+                        </Grid>
+
+                        <TextBlock Text="Backup comment" Style="{StaticResource FieldLabel}" />
+                        <TextBox x:Name="CommentBox"
+                                 MinHeight="74"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalContentAlignment="Top"
+                                 ToolTip="Optionnel: jalon, indice, raison de la sauvegarde..." />
+
+                        <Grid Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="1" Content="Analyze active" Click="Analyze_Click" />
+                            <Button x:Name="Db1BackupButton"
+                                    Grid.Column="3"
+                                    Content="Run DB1 now"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Click="BackupDb1_Click" />
+                            <Button x:Name="FullBackupButton"
+                                    Grid.Column="5"
+                                    Content="Run full now"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Click="BackupFull_Click" />
+                        </Grid>
+
+                        <ProgressBar x:Name="BackupProgress" Height="18" Margin="0,18,0,0" Minimum="0" Maximum="100" />
+                        <TextBlock x:Name="ProgressText" Text="No backup started" Foreground="#516070" Margin="0,8,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <Border Grid.Column="2" Background="White" BorderBrush="#DCE3EF" BorderThickness="1" CornerRadius="8" Padding="22">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Tekla backup console" Style="{StaticResource SectionTitle}" />
+                    <StackPanel Grid.Row="1">
+                        <Border Background="White"
+                                BorderBrush="#DCE3EF"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10"
+                                Margin="0,0,0,16">
+                            <TextBlock Text="Tekla Backup Manager" FontWeight="Bold" FontSize="24" TextWrapping="Wrap" />
+                        </Border>
+                        <TextBlock Text="Recommended structure" FontWeight="SemiBold" />
+                        <TextBlock Text="DB1: [BackupRoot]\BACKUPDB1\[USER]\yyyy-dd-MM" Foreground="#516070" TextWrapping="Wrap" Margin="0,5,0,6" />
+                        <TextBlock Text="Full: [BackupRoot]\TEKLASTRUCTUREMODEL\[USER]" Foreground="#516070" TextWrapping="Wrap" Margin="0,0,0,14" />
+                        <TextBlock Text="Background mode" FontWeight="SemiBold" />
+                        <CheckBox x:Name="StartWithWindowsBox"
+                                  Content="Start this console with Windows"
+                                  Margin="0,6,0,8"
+                                  Click="StartWithWindows_Click" />
+                        <TextBlock Text="Closing the window hides the application near the clock. Automatic backups continue while the Windows session is open."
+                                   Foreground="#516070"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,14" />
+                        <TextBlock Text="Planning" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ScheduleSummaryText" Foreground="#516070" TextWrapping="Wrap" Margin="0,5,0,14" />
+                        <TextBlock Text="Local configuration" FontWeight="SemiBold" />
+                        <TextBlock x:Name="ConfigPathText" Foreground="#516070" TextWrapping="Wrap" Margin="0,5,0,14" />
+                        <Button Content="Save settings"
+                                HorizontalAlignment="Left"
+                                Margin="0,0,0,14"
+                                Click="SaveConfiguration_Click" />
+                        <TextBlock Text="A manifest.txt file is created for each backup to trace source, user, date and comment."
+                                   Foreground="#516070"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <Border Grid.Row="2" Background="#F8FAFE" BorderBrush="#E1E8F2" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,18,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Journal" FontWeight="SemiBold" Margin="0,0,0,8" />
+                            <TextBox x:Name="LogBox"
+                                     Grid.Row="1"
+                                     IsReadOnly="True"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     FontFamily="Consolas"
+                                     FontSize="12" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="2"
+                   Text="Configure paths and permissions before enabling automatic backups."
+                   Foreground="#697789"
+                   Margin="0,16,0,0" />
+    </Grid>
+</Window>
